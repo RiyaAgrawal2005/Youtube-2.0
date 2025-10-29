@@ -14,11 +14,12 @@ import Channeldialogue from "./channeldialogue";
 import { useUser } from "@/lib/AuthContext";
 
 const Sidebar = () => {
-  const { user } = useUser();
-
+  // const { user } = useUser();
+const userContext = useUser() as { user: any } | null;
+const user = userContext?.user;
   const [isdialogeopen, setisdialogeopen] = useState(false);
   return (
-    // <aside className="w-64 bg-white  border-r min-h-screen p-2">
+
       <aside className="w-64 bg-sidebar text-sidebar-foreground border-sidebar-border min-h-screen p-2 transition-colors duration-300">
 
       <nav className="space-y-1">
