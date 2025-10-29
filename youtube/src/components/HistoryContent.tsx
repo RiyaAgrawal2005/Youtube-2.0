@@ -18,7 +18,9 @@ import { useUser } from "@/lib/AuthContext";
 export default function HistoryContent() {
   const [history, setHistory] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const { user } = useUser();
+  // const { user } = useUser();
+const userContext = useUser() as { user: any } | null;
+const user = userContext?.user;
 
   useEffect(() => {
     if (user) {
