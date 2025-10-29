@@ -13,16 +13,41 @@ type DownloadType = {
 export default function Downloads() {
 //   const [downloads, setDownloads] = useState([]);
   const [downloads, setDownloads] = useState<DownloadType[]>([]);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+  // const userEmail = localStorage.getItem("userEmail");
 
-  const userEmail = localStorage.getItem("userEmail");
+
+useEffect(() => {
+    // ✅ Run only on the client
+    if (typeof window !== "undefined") {
+      const email = localStorage.getItem("userEmail");
+      setUserEmail(email);
+    }
+  }, []);
 
   useEffect(() => {
+    // ✅ Fetch only when email is available
     const fetchDownloads = async () => {
-      const res = await axios.get(`/api/downloads/user/${userEmail}`);
-      setDownloads(res.data);
+      if (userEmail) {
+        try {
+          const res = await axios.get(`/api/downloads/user/${userEmail}`);
+          setDownloads(res.data);
+        } catch (err) {
+          console.error("Error fetching downloads:", err);
+        }
+      }
     };
     fetchDownloads();
-  }, []);
+  }, [userEmail]);
+
+
+  // useEffect(() => {
+  //   const fetchDownloads = async () => {
+  //     const res = await axios.get(`/api/downloads/user/${userEmail}`);
+  //     setDownloads(res.data);
+  //   };
+  //   fetchDownloads();
+  // }, []);
 
   return (
     <div>
