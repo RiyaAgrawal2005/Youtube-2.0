@@ -14,14 +14,28 @@ import { Button } from "./ui/button";
 import axiosInstance from "@/lib/axiosinstance";
 import { useUser } from "@/lib/AuthContext";
 
+  // ✅ Temporary type fix for TypeScript
+interface User {
+  _id?: string;
+  name?: string;
+  email?: string;
+  image?: string;
+}
+
+interface UserContextType {
+  user: User | null;
+  login: (userData: User) => void;
+}
 const Channeldialogue = ({ isopen, onclose, channeldata, mode }: any) => {
-  const { user, login } = useUser();
-  // const user: any = {
-  //   id: "1",
-  //   name: "John Doe",
-  //   email: "john@example.com",
-  //   image: "https://github.com/shadcn.png?height=32&width=32",
-  // };
+
+
+  // const { user, login } = useUser();
+
+ const context = useUser() as UserContextType | null;
+  // const user = context?.user;
+  // const login = context?.login;
+  const user = context?.user ?? null; // ✅ Always either User or null
+  const login = context?.login ?? (() => {});
   const router = useRouter();
   const [formData, setFormData] = useState({
     name: "",
@@ -47,27 +61,66 @@ const Channeldialogue = ({ isopen, onclose, channeldata, mode }: any) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
+
+
+  // const handlesubmit = async (e: FormEvent) => {
+  //   e.preventDefault();
+  //   const payload = {
+  //     channelname: formData.name,
+  //     description: formData.description,
+  //   };
+  //   const response = await axiosInstance.patch(
+  //     `/user/update/${user._id}`,
+  //     payload
+  //   );
+  //   login(response?.data);
+  //   router.push(`/channel/${user?._id}`);
+  //   setFormData({
+  //     name: "",
+  //     description: "",
+  //   });
+  //   onclose();
+  // };
+
+
   const handlesubmit = async (e: FormEvent) => {
-    e.preventDefault();
+  e.preventDefault();
+
+  if (!user?._id) {
+    alert("User not found. Please log in again.");
+    return;
+  }
+
+  setisSubmitting(true);
+  try {
     const payload = {
       channelname: formData.name,
       description: formData.description,
     };
+
     const response = await axiosInstance.patch(
       `/user/update/${user._id}`,
       payload
     );
+
     login(response?.data);
-    router.push(`/channel/${user?._id}`);
+    router.push(`/channel/${user._id}`);
     setFormData({
       name: "",
       description: "",
     });
     onclose();
-  };
+  } catch (error) {
+    console.error("Error updating channel:", error);
+  } finally {
+    setisSubmitting(false);
+  }
+};
+
+
   return (
     <Dialog open={isopen} onOpenChange={onclose}>
-      {/* <DialogContent className="sm:max-w-md md:max-w-lg"> */}
+
         <DialogContent className="sm:max-w-md md:max-w-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
         <DialogHeader>
           <DialogTitle>
@@ -78,7 +131,7 @@ const Channeldialogue = ({ isopen, onclose, channeldata, mode }: any) => {
         <form onSubmit={handlesubmit} className="space-y-6">
           {/* Channel Name */}
           <div className="space-y-2">
-            {/* <Label htmlFor="name"> */}
+           
              <Label htmlFor="name" className="dark:text-gray-200">
               Channel Name</Label>
             <Input
@@ -91,7 +144,7 @@ const Channeldialogue = ({ isopen, onclose, channeldata, mode }: any) => {
           </div>
           {/* Channel Description */}
           <div className="space-y-2">
-            {/* <Label htmlFor="description"> */}
+           
                 <Label htmlFor="description" className="dark:text-gray-200">
               Channel Description</Label>
             <Textarea
