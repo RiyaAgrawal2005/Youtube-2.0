@@ -57,17 +57,7 @@ const user = userContext?.user;
   };
 
   if (!user) {
-    // return (
-    //   <div className="text-center py-12">
-    //     <Clock className="w-16 h-16 mx-auto text-gray-400 mb-4" />
-    //     <h2 className="text-xl font-semibold mb-2">
-    //       Keep track of what you watch
-    //     </h2>
-    //     <p className="text-gray-600">
-    //       Watch history isn't viewable when signed out.
-    //     </p>
-    //   </div>
-    // );
+    
     return (
       <div className="text-center py-12 dark:text-gray-300">
         <Clock className="w-16 h-16 mx-auto text-gray-400 dark:text-gray-500 mb-4" />
@@ -80,13 +70,7 @@ const user = userContext?.user;
   }
 
   if (history.length === 0) {
-    // return (
-    //   <div className="text-center py-12">
-    //     <Clock className="w-16 h-16 mx-auto text-gray-400 mb-4" />
-    //     <h2 className="text-xl font-semibold mb-2">No watch history yet</h2>
-    //     <p className="text-gray-600">Videos you watch will appear here.</p>
-    //   </div>
-    // );
+    
      return (
       <div className="text-center py-12 dark:text-gray-300">
         <Clock className="w-16 h-16 mx-auto text-gray-400 dark:text-gray-500 mb-4" />
@@ -101,7 +85,7 @@ const user = userContext?.user;
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        {/* <p className="text-sm text-gray-600">{history.length} videos</p> */}
+       
         <p className="text-sm text-gray-600 dark:text-gray-400">{history.length} videos</p>
       </div>
 
@@ -109,7 +93,7 @@ const user = userContext?.user;
         {history.map((item) => (
           <div key={item._id} className="flex gap-4 group">
             <Link href={`/watch/${item.videoid._id}`} className="flex-shrink-0">
-              {/* <div className="relative w-40 aspect-video bg-gray-100 rounded overflow-hidden"> */}
+       
                 <div className="relative w-40 aspect-video bg-gray-100 dark:bg-gray-800 rounded overflow-hidden">
                 <video
                   src={`${process.env.BACKEND_URL}/${item.videoid?.filepath}`}
@@ -120,21 +104,12 @@ const user = userContext?.user;
 
             <div className="flex-1 min-w-0">
               <Link href={`/watch/${item.videoid._id}`}>
-                {/* <h3 className="font-medium text-sm line-clamp-2 group-hover:text-blue-600 mb-1"> */}
+               
                    <h3 className="font-medium text-sm line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 mb-1 text-gray-900 dark:text-gray-100">
                   {item.videoid.videotitle}
                 </h3>
               </Link>
-              {/* <p className="text-sm text-gray-600">
-                {item.videoid.videochanel}
-              </p>
-              <p className="text-sm text-gray-600">
-                {item.videoid.views.toLocaleString()} views •{" "}
-                {formatDistanceToNow(new Date(item.videoid.createdAt))} ago
-              </p>
-              <p className="text-xs text-gray-500 mt-1">
-                Added {formatDistanceToNow(new Date(item.createdAt))} ago
-              </p> */}
+             
                <p className="text-sm text-gray-600 dark:text-gray-400">
                 {item.videoid.videochanel}
               </p>
