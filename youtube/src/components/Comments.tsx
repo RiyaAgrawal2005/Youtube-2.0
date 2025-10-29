@@ -1,644 +1,3 @@
-// import React, { useEffect, useState } from 'react'
-// import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-// import { Textarea } from './ui/textarea';
-// import { Button } from './ui/button';
-// import { formatDistanceToNow } from 'date-fns';
-// import { useUser } from '@/lib/AuthContext';
-// import axiosInstance from '@/lib/axiosinstance';
-
-// interface Comment {
-//     _id: string;
-//     videoid: string;
-//     userid: string;
-//     commentbody: string;
-//     usercommented: string;
-//     commentedon: string;
-// }
-// const Comments = ({ videoId }: any) => {
-//     const [comments, setComments] = useState<Comment[]>([]);
-//     const [newComment, setNewComment] = useState("");
-//     const [isSubmitting, setIsSubmitting] = useState(false);
-//     const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
-//     const [editText, setEditText] = useState("");
-//      const { user } = useUser();
-//       const [loading, setLoading] = useState(true);
-
-//     const fetchedComments = [
-//         {
-//             _id: "1",
-//             videoid: videoId,
-//             userid: "1",
-//             commentbody: "Great video! Really enjoyed watching this.",
-//             usercommented: "John Doe",
-//             commentedon: new Date(Date.now() - 3600000).toISOString(),
-//         },
-//         {
-//             _id: "2",
-//             videoid: videoId,
-//             userid: "2",
-//             commentbody: "Thanks for sharing this amazing content!",
-//             usercommented: "Jane Smith",
-//             commentedon: new Date(Date.now() - 7200000).toISOString(),
-//         },
-//     ];
-//     useEffect(() => {
-//         loadComments();
-//     }, [videoId]);
-
-//     const loadComments = async () => {
-//          try {
-//       const res = await axiosInstance.get(`/comment/${videoId}`);
-//     //   setComments(fetchedComments);
-//       setComments(res.data);
-//     } catch (error) {
-//       console.log(error);
-//     } finally {
-//       setLoading(false);
-//     }
-//     }
-//  if (loading) {
-//     return <div>Loading history...</div>;
-//   }
-
-//     const handleSubmitComment = async () => {
-//         if (!user || !newComment.trim()) return;
-
-//         setIsSubmitting(true);
-//         try {
-//             const res = await axiosInstance.post("/comment/postcomment", {
-//         videoid: videoId,
-//         userid: user._id,
-//         commentbody: newComment,
-//         usercommented: user.name,
-//       });
-
-//        if (res.data.comment) {
-//         const newCommentObj: Comment = {
-//           _id: Date.now().toString(),
-//           videoid: videoId,
-//           userid: user._id,
-//           commentbody: newComment,
-//           usercommented: user.name || "Anonymous",
-//           commentedon: new Date().toISOString(),
-//         };
-
-//             setComments([newCommentObj, ...comments]);
-//     }
-//             setNewComment("");
-//         } catch (error) {
-//             console.error("Error adding comment:", error);
-//         } finally {
-//             setIsSubmitting(false);
-//         }
-//     };
-
-//     const handleEdit = (comment: Comment) => {
-//         setEditingCommentId(comment._id);
-//         setEditText(comment.commentbody);
-//     };
-
-
-
-
-//     const handleUpdateComment = async () => {
-//     if (!editText.trim()) return;
-//     try {
-//       const res = await axiosInstance.post(
-//         `/comment/editcomment/${editingCommentId}`,
-//         { commentbody: editText }
-//       );
-//       if (res.data) {
-//         setComments((prev) =>
-//           prev.map((c) =>
-//             c._id === editingCommentId ? { ...c, commentbody: editText } : c
-//           )
-//         );
-//         setEditingCommentId(null);
-//         setEditText("");
-//       }
-//     } catch (error) {
-//       console.log(error);
-//     }
-//   };
-
-
-
-//     const handleDelete = async (id: string) => {
-//     try {
-//       const res = await axiosInstance.delete(`/comment/deletecomment/${id}`);
-//       if (res.data.comment) {
-//         setComments((prev) => prev.filter((c) => c._id !== id));
-//       }
-//     } catch (error) {
-//       console.log(error);
-//     }
-//   };
-//     return (
-//     <div className="space-y-6">
-//       <h2 className="text-xl font-semibold">{comments.length} Comments</h2>
-
-//       {user && (
-//         <div className="flex gap-4">
-//           <Avatar className="w-10 h-10">
-//             <AvatarImage src={user.image || ""} />
-//             <AvatarFallback>{user.name?.[0] || "U"}</AvatarFallback>
-//           </Avatar>
-//           <div className="flex-1 space-y-2">
-//             <Textarea
-//               placeholder="Add a comment..."
-//               value={newComment}
-//               onChange={(e: any) => setNewComment(e.target.value)}
-//               className="min-h-[80px] resize-none border-0 border-b-2 rounded-none focus-visible:ring-0"
-//             />
-//             <div className="flex gap-2 justify-end">
-//               <Button
-//                 variant="ghost"
-//                 onClick={() => setNewComment("")}
-//                 disabled={!newComment.trim()}
-//               >
-//                 Cancel
-//               </Button>
-//               <Button
-//                 onClick={handleSubmitComment}
-//                 disabled={!newComment.trim() || isSubmitting}
-//               >
-//                 Comment
-//               </Button>
-//             </div>
-//           </div>
-//         </div>
-//       )}
-//       <div className="space-y-4">
-//         {comments.length === 0 ? (
-//           <p className="text-sm text-gray-500 italic">
-//             No comments yet. Be the first to comment!
-//           </p>
-//         ) : (
-//           comments.map((comment) => (
-//             <div key={comment._id} className="flex gap-4">
-//               <Avatar className="w-10 h-10">
-//                 <AvatarImage src="/placeholder.svg?height=40&width=40" />
-//                 <AvatarFallback>{comment.usercommented[0]}</AvatarFallback>
-//               </Avatar>
-//               <div className="flex-1">
-//                 <div className="flex items-center gap-2 mb-1">
-//                   <span className="font-medium text-sm">
-//                     {comment.usercommented}
-//                   </span>
-//                   <span className="text-xs text-gray-600">
-//                     {formatDistanceToNow(new Date(comment.commentedon))} ago
-//                   </span>
-//                 </div>
-
-//                 {editingCommentId === comment._id ? (
-//                   <div className="space-y-2">
-//                     <Textarea
-//                       value={editText}
-//                       onChange={(e) => setEditText(e.target.value)}
-//                     />
-//                     <div className="flex gap-2 justify-end">
-//                       <Button
-//                         onClick={handleUpdateComment}
-//                         disabled={!editText.trim()}
-//                       >
-//                         Save
-//                       </Button>
-//                       <Button
-//                         variant="ghost"
-//                         onClick={() => {
-//                           setEditingCommentId(null);
-//                           setEditText("");
-//                         }}
-//                       >
-//                         Cancel
-//                       </Button>
-//                     </div>
-//                   </div>
-//                 ) : (
-//                   <>
-//                     <p className="text-sm">{comment.commentbody}</p>
-//                     {comment.userid === user?._id && (
-//                       <div className="flex gap-2 mt-2 text-sm text-gray-500">
-//                         <button onClick={() => handleEdit(comment)}>
-//                           Edit
-//                         </button>
-//                         <button onClick={() => handleDelete(comment._id)}>
-//                           Delete
-//                         </button>
-//                       </div>
-//                     )}
-//                   </>
-//                 )}
-//               </div>
-//             </div>
-//           ))
-//         )}
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Comments;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// import React, { useEffect, useState } from 'react';
-// import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-// import { Textarea } from './ui/textarea';
-// import { Button } from './ui/button';
-// import { formatDistanceToNow } from 'date-fns';
-// import { useUser } from '@/lib/AuthContext';
-// import axiosInstance from '@/lib/axiosinstance';
-// import axios from 'axios';
-
-// interface Comment {
-//   _id: string;
-//   videoid: string;
-//   userid: string;
-//   commentbody: string;
-//   usercommented: string;
-//   commentedon: string;
-//   likes?: number;
-//   dislikes?: number;
-//   city?: string;
-// }
-
-// const Comments = ({ videoId }: any) => {
-//   const [comments, setComments] = useState<Comment[]>([]);
-//   const [newComment, setNewComment] = useState('');
-//   const [isSubmitting, setIsSubmitting] = useState(false);
-//   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
-//   const [editText, setEditText] = useState('');
-//   const { user } = useUser();
-//   const [loading, setLoading] = useState(true);
-//   const [city, setCity] = useState('');
-//   const [targetLanguage, setTargetLanguage] = useState('en');
-//   const [targetLanguageForInput, setTargetLanguageForInput] = useState('en');
-//   const [commentLangMap, setCommentLangMap] = useState<{ [key: string]: string }>({});
-
-//   useEffect(() => {
-//     loadComments();
-//     getUserCity();
-//   }, [videoId]);
-
-//   const loadComments = async () => {
-//     try {
-//       const res = await axiosInstance.get(`/comment/${videoId}`);
-//       setComments(res.data);
-//     } catch (error) {
-//       console.log(error);
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   const getUserCity = async () => {
-//     try {
-//       const res = await axios.get('https://ipapi.co/json/');
-//       setCity(res.data.city);
-//     } catch (err) {
-//       console.error('Failed to fetch city', err);
-//     }
-//   };
-
-//   const containsSpecialChars = (str: string) => /[^a-zA-Z0-9\s.,!?'"()@-]/.test(str);
-
-//   const handleSubmitComment = async () => {
-//     if (!user || !newComment.trim()) return;
-
-//     if (containsSpecialChars(newComment)) {
-//       alert("Don't comment in special characters");
-//       return;
-//     }
-
-//     setIsSubmitting(true);
-
-//     try {
-//       const res = await axiosInstance.post('/comment/postcomment', {
-//         videoid: videoId,
-//         userid: user._id,
-//         commentbody: newComment,
-//         usercommented: user.name,
-//         city,
-//         likes: 0,
-//         dislikes: 0,
-//       });
-
-//       if (res.data.comment) {
-//         const newCommentObj: Comment = {
-//           _id: Date.now().toString(),
-//           videoid: videoId,
-//           userid: user._id,
-//           commentbody: newComment,
-//           usercommented: user.name || 'Anonymous',
-//           commentedon: new Date().toISOString(),
-//           likes: 0,
-//           dislikes: 0,
-//           city,
-//         };
-//         setComments([newCommentObj, ...comments]);
-//       }
-//       setNewComment('');
-//     } catch (error) {
-//       console.error('Error adding comment:', error);
-//     } finally {
-//       setIsSubmitting(false);
-//     }
-//   };
-
-//   const handleLike = (id: string) => {
-//     setComments((prev) =>
-//       prev.map((c) => (c._id === id ? { ...c, likes: (c.likes || 0) + 1 } : c))
-//     );
-//   };
-
-//   const handleDislike = (id: string) => {
-//     const updatedComments = comments.map((c) => {
-//       if (c._id === id) {
-//         const newDislikes = (c.dislikes || 0) + 1;
-//         return { ...c, dislikes: newDislikes };
-//       }
-//       return c;
-//     });
-
-//     setComments(updatedComments);
-
-//     const dislikedComment = updatedComments.find((c) => c._id === id);
-//     if (dislikedComment?.dislikes! >= 2) {
-//       handleDelete(id);
-//     }
-//   };
-
-//   const handleTranslate = async (text: string, targetLang: string = 'en') => {
-//   try {
-//     const params = new URLSearchParams();
-//     params.append('q', text);
-//     params.append('source', 'auto');
-//     params.append('target', targetLang);
-//     params.append('format', 'text');
-
-//     const res = await axios.post(
-//       'https://libretranslate.de/translate', // more stable mirror
-//       params,
-//       {
-//         headers: {
-//           'Content-Type': 'application/x-www-form-urlencoded',
-//         },
-//       }
-//     );
-//       // return res.data.translatedText;
-//        return res.data?.translatedText || text;
-//     } catch (error) {
-//       console.error('Translation error:', error);
-//       return text;
-//     }
-//   };
-
-//   const handleEdit = (comment: Comment) => {
-//     setEditingCommentId(comment._id);
-//     setEditText(comment.commentbody);
-//   };
-
-//   const handleUpdateComment = async () => {
-//     if (!editText.trim() || containsSpecialChars(editText)) {
-//       alert("Don't comment in special characters");
-//       return;
-//     }
-
-//     try {
-//       const res = await axiosInstance.post(
-//         `/comment/editcomment/${editingCommentId}`,
-//         {
-//           commentbody: editText,
-//         }
-//       );
-
-//       if (res.data) {
-//         setComments((prev) =>
-//           prev.map((c) =>
-//             c._id === editingCommentId ? { ...c, commentbody: editText } : c
-//           )
-//         );
-//         setEditingCommentId(null);
-//         setEditText('');
-//       }
-//     } catch (error) {
-//       console.log(error);
-//     }
-//   };
-
-//   const handleDelete = async (id: string) => {
-//     try {
-//       const res = await axiosInstance.delete(`/comment/deletecomment/${id}`);
-//       if (res.data.comment) {
-//         setComments((prev) => prev.filter((c) => c._id !== id));
-//       }
-//     } catch (error) {
-//       console.log(error);
-//     }
-//   };
-
-//   const LANG_OPTIONS = [
-//     { code: 'en', label: 'English' },
-//     { code: 'hi', label: 'Hindi' },
-//     { code: 'es', label: 'Spanish' },
-//     { code: 'fr', label: 'French' },
-//     { code: 'de', label: 'German' },
-//     { code: 'zh', label: 'Chinese' },
-//     { code: 'ja', label: 'Japanese' },
-//     { code: 'ar', label: 'Arabic' },
-//   ];
-
-//   if (loading) return <div>Loading comments...</div>;
-
-//   return (
-//     <div className="space-y-6">
-//       <h2 className="text-xl font-semibold">{comments.length} Comments</h2>
-
-//       <div className="flex gap-4 items-center flex-wrap">
-//         <label className="text-sm font-medium">Translate To:</label>
-//         <select
-//           value={targetLanguageForInput}
-//           onChange={(e) => setTargetLanguageForInput(e.target.value)}
-//           className="border px-2 py-1 rounded"
-//         >
-//           {LANG_OPTIONS.map((lang) => (
-//             <option key={lang.code} value={lang.code}>{lang.label}</option>
-//           ))}
-//         </select>
-
-//         <Button
-//           size="sm"
-//           className="ml-2"
-//           onClick={async () => {
-//             const translated = await handleTranslate(newComment, targetLanguageForInput);
-//             setNewComment(translated);
-//           }}
-//         >
-//           🌐 Translate
-//         </Button>
-//       </div>
-
-//       {user && (
-//         <div className="flex gap-4">
-//           <Avatar className="w-10 h-10">
-//             <AvatarImage src={user.image || ''} />
-//             <AvatarFallback>{user.name?.[0] || 'U'}</AvatarFallback>
-//           </Avatar>
-//           <div className="flex-1 space-y-2">
-//             <Textarea
-//               placeholder="Add a comment..."
-//               value={newComment}
-//               onChange={(e: any) => setNewComment(e.target.value)}
-//               className="min-h-[80px] resize-none border-0 border-b-2 rounded-none focus-visible:ring-0"
-//             />
-//             <div className="flex gap-2 justify-end">
-//               <Button variant="ghost" onClick={() => setNewComment('')} disabled={!newComment.trim()}>
-//                 Cancel
-//               </Button>
-//               <Button onClick={handleSubmitComment} disabled={!newComment.trim() || isSubmitting}>
-//                 Comment
-//               </Button>
-//             </div>
-//           </div>
-//         </div>
-//       )}
-
-//       <div className="space-y-4">
-//         {comments.length === 0 ? (
-//           <p className="text-sm text-gray-500 italic">No comments yet. Be the first to comment!</p>
-//         ) : (
-//           comments.map((comment) => (
-//             <div key={comment._id} className="flex gap-4">
-//               <Avatar className="w-10 h-10">
-//                 <AvatarImage src="/placeholder.svg?height=40&width=40" />
-//                 <AvatarFallback>{comment.usercommented[0]}</AvatarFallback>
-//               </Avatar>
-//               <div className="flex-1">
-//                 <div className="flex items-center gap-2 mb-1">
-//                   <span className="font-medium text-sm">{comment.usercommented}</span>
-//                   <span className="text-xs text-gray-600">
-//                     {formatDistanceToNow(new Date(comment.commentedon))} ago
-//                   </span>
-//                   <span className="text-xs text-blue-600 ml-auto">
-//                     {comment.city || 'Unknown City'}
-//                   </span>
-//                 </div>
-
-//                 {editingCommentId === comment._id ? (
-//                   <div className="space-y-2">
-//                     <Textarea value={editText} onChange={(e) => setEditText(e.target.value)} />
-//                     <div className="flex gap-2 justify-end">
-//                       <Button onClick={handleUpdateComment} disabled={!editText.trim()}>
-//                         Save
-//                       </Button>
-//                       <Button variant="ghost" onClick={() => setEditingCommentId(null)}>
-//                         Cancel
-//                       </Button>
-//                     </div>
-//                   </div>
-//                 ) : (
-//                   <>
-//                     <p className="text-sm">{comment.commentbody}</p>
-//                     <div className="flex gap-2 items-center mt-2 text-sm text-gray-500 flex-wrap">
-//                       <button onClick={() => handleLike(comment._id)}>👍 {comment.likes || 0}</button>
-//                       <button onClick={() => handleDislike(comment._id)}>👎 {comment.dislikes || 0}</button>
-
-//                       <select
-//                         value={commentLangMap[comment._id] || 'en'}
-//                         onChange={(e) =>
-//                           setCommentLangMap({ ...commentLangMap, [comment._id]: e.target.value })
-//                         }
-//                         className="border px-1 py-0.5 rounded text-sm"
-//                       >
-//                         {LANG_OPTIONS.map((lang) => (
-//                           <option key={lang.code} value={lang.code}>
-//                             {lang.label}
-//                           </option>
-//                         ))}
-//                       </select>
-
-//                       {/* <button
-//                         className="text-blue-600"
-//                         onClick={async () => {
-//                           const translated = await handleTranslate(
-//                             comment.commentbody,
-//                             commentLangMap[comment._id] || 'en'
-//                           );
-//                           alert(`Translated (${commentLangMap[comment._id] || 'en'}): ${translated}`);
-//                         }}
-//                       >
-//                         🌐 Translate
-//                       </button> */}
-
-
-//                       <button
-//   className="text-blue-600"
-//   onClick={async () => {
-//     const targetLang = commentLangMap[comment._id] || 'en';
-//     const translated = await handleTranslate(comment.commentbody, targetLang);
-
-//     if (translated && translated !== comment.commentbody) {
-//       const langLabel = LANG_OPTIONS.find((lang) => lang.code === targetLang)?.label || targetLang;
-//       alert(`Translate "${comment.commentbody}" to ${langLabel}: ${translated}`);
-//     } else {
-//       alert("Could not translate the comment. It might already be in the selected language.");
-//     }
-//   }}
-// >
-//   🌐 Translate
-// </button>
-
-
-//                       {comment.userid === user?._id && (
-//                         <>
-//                           <button onClick={() => handleEdit(comment)}>Edit</button>
-//                           <button onClick={() => handleDelete(comment._id)}>Delete</button>
-//                         </>
-//                       )}
-//                     </div>
-//                   </>
-//                 )}
-//               </div>
-//             </div>
-//           ))
-//         )}
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Comments;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 import React, { useEffect, useState } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
@@ -672,7 +31,13 @@ const Comments = ({ videoId }: any) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [editText, setEditText] = useState('');
-  const { user } = useUser();
+  // const { user } = useUser();
+// Explicitly define type if useUser() might return undefined or null
+const userContext: { user?: any } | null = useUser() as any;
+const user = userContext?.user ?? null;
+
+
+
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [city, setCity] = useState('');
@@ -683,14 +48,7 @@ const Comments = ({ videoId }: any) => {
   const [translatedCommentPreview, setTranslatedCommentPreview] = useState('');
   const [commentLangMap, setCommentLangMap] = useState<{ [key: string]: string }>({});
   const [translatedComments, setTranslatedComments] = useState<{ [key: string]: string }>({});
-  // useEffect(() => {
-  //   const unsubscribe = onAuthStateChanged(auth, (user) => {
-  //     if (user) {
-  //       setCurrentUserId(user.uid);
-  //     } else {
-  //       setCurrentUserId(null);
-  //     }
-  //   });
+  
 useEffect(() => {
   console.log("Updated comments state:", comments);
 }, [comments]);useEffect(() => {
@@ -1061,16 +419,16 @@ useEffect(() => {
 
 
   return (
-    // <div className="space-y-6">
+    
      <div className="space-y-6 bg-background text-foreground transition-colors duration-300">
 
 
-      {/* <h2 className="text-xl font-semibold">{comments.length} Comments</h2> */}
+     
  <h2 className="text-xl font-semibold">
         {comments.length} Comment{comments.length !== 1 ? 's' : ''}
       </h2>
       <div className="flex gap-4 items-center flex-wrap">
-        {/* <label className="text-sm font-medium">Translate To:</label> */}
+
         <label className="text-sm font-medium">
           Translate  ({newComment})  To:
         </label>
@@ -1087,7 +445,7 @@ useEffect(() => {
 
         <Button
           size="sm"
-          // className="ml-2 bg-white hover:bg-blue-400 hover:text-white px-2 py-1 rounded cursor-pointer transition-colors duration-200"
+          
           className="ml-2 bg-gray-500 text-white dark:bg-gray-800 hover:bg-blue-400 hover:text-white dark:hover:bg-blue-500 dark:hover:text-white px-2 py-1 rounded cursor-pointer transition-colors duration-200"
 
           onClick={async () => {
@@ -1127,7 +485,7 @@ useEffect(() => {
         <div className="flex gap-4">
           <Avatar className="w-10 h-10">
             <AvatarImage src={user.image || ''} />
-            {/* <AvatarFallback>{user.name?.[0] || 'U'}</AvatarFallback> */}
+           
             <AvatarFallback className="bg-gray-300 dark:bg-gray-700 text-black dark:text-white">
   {user.name?.[0] || 'U'}
 </AvatarFallback>
@@ -1138,7 +496,7 @@ useEffect(() => {
               placeholder="Add a comment..."
               value={newComment}
               onChange={(e: any) => setNewComment(e.target.value)}
-              // className="min-h-[80px] resize-none border-0 border-b-2 rounded-none focus-visible:ring-0"
+             
               className="min-h-[80px] resize-none border-0 border-b-2 rounded-none focus-visible:ring-0 bg-input text-input-foreground"
             />
             <div className="flex gap-2 justify-end">
@@ -1171,7 +529,7 @@ useEffect(() => {
                   <span className="text-xs text-gray-600">
                     {formatDistanceToNow(new Date(comment.commentedon))} ago
                   </span>
-                  {/* <span className="text-xs text-white ml-auto"> */}
+                
                     <span className="text-gray-900 dark:text-white text-xs ml-auto">
 
                     {comment.city || 'Unknown City'}
@@ -1218,8 +576,7 @@ useEffect(() => {
                       </select>
 
                       <button
-                        // className="text-blue-600"
-                        //  className="text-black bg-white hover:bg-green-800 hover:text-white px-2 py-1 rounded cursor-pointer transition-colors duration-200"
+                       
                         className="text-white dark:text-white bg-gray-500 dark:bg-gray-800 hover:bg-green-600 dark:hover:bg-green-600 hover:text-white px-2 py-1 rounded cursor-pointer transition-colors duration-200"
 
                         onClick={async () => {
@@ -1234,7 +591,7 @@ useEffect(() => {
                       {comment.userid === user?._id && (
                         <>
                           <button onClick={() => handleEdit(comment)}>Edit</button>
-                          {/* <button onClick={() => handleDelete(comment._id)}>Delete</button> */}
+                        
                           <button onClick={() => confirmDeleteComment(comment._id)}>Delete</button>
 
                         </>
