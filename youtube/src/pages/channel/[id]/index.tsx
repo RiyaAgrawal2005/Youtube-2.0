@@ -7,16 +7,47 @@ import { notFound } from "next/navigation";
 import { useRouter } from "next/router";
 import React from "react";
 
+
+interface User {
+  _id?: string;
+  name?: string;
+  email?: string;
+  image?: string;
+  channelname?: string;
+}
+
+interface UserContextType {
+  user: User | null;
+  login: (userData: User) => void;
+}
+
 const index = () => {
   const router = useRouter();
   const { id } = router.query;
-  const { user } = useUser();
+  // const { user } = useUser();
+const context = useUser() as UserContextType | null;
+  const user = context?.user ?? null;
+
+
+
   // const user: any = {
   //   id: "1",
   //   name: "John Doe",
   //   email: "john@example.com",
   //   image: "https://github.com/shadcn.png?height=32&width=32",
   // };
+
+
+  if (!user) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <p className="text-gray-700 dark:text-gray-300 text-lg">
+          Loading channel information...
+        </p>
+      </div>
+    );
+  }
+
   try {
     let channel = user;
    
