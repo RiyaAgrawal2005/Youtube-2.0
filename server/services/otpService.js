@@ -1,0 +1,356 @@
+// // backend/services/otpService.js
+// import nodemailer from "nodemailer";
+// import twilio from "twilio";
+
+// const otpStore = new Map(); // { identifier -> { otp, expires } }
+// const EXP_MS = 5 * 60 * 1000; // 5 minutes
+
+// export const generateAndStoreOtp = (identifier) => {
+//   const otp = Math.floor(100000 + Math.random() * 900000).toString();
+//   otpStore.set(identifier, { otp, expires: Date.now() + EXP_MS });
+//   return otp;
+// };
+
+// export const verifyOtp = (identifier, candidateOtp) => {
+//   const rec = otpStore.get(identifier);
+//   if (!rec) return false;
+//   if (Date.now() > rec.expires) {
+//     otpStore.delete(identifier);
+//     return false;
+//   }
+//   if (rec.otp !== candidateOtp) return false;
+//   otpStore.delete(identifier);
+//   return true;
+// };
+
+// export const sendEmailOtp = async (email, otp) => {
+//   const transporter = nodemailer.createTransport({
+//     service: "gmail",
+//     auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
+//   });
+//   await transporter.sendMail({
+//     from: `"YouTube 2.0" <${process.env.EMAIL_USER}>`,
+//     to: email,
+//     subject: "Your login OTP",
+//     text: `Your OTP is ${otp}`,
+//   });
+// };
+
+// export const sendSmsOtp = async (mobile, otp) => {
+//   if (!process.env.TWILIO_SID || !process.env.TWILIO_AUTH_TOKEN || !process.env.TWILIO_PHONE) {
+//     throw new Error("Twilio not configured");
+//   }
+//   const client = twilio(process.env.TWILIO_SID, process.env.TWILIO_AUTH_TOKEN);
+//   await client.messages.create({
+//     body: `Your OTP is ${otp}`,
+//     from: process.env.TWILIO_PHONE,
+//     to: mobile,
+//   });
+// };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// import nodemailer from "nodemailer";
+// import twilio from "twilio";
+
+// const otpStore = new Map(); // { identifier -> { otp, expires } }
+// const EXP_MS = 5 * 60 * 1000; // 5 minutes
+
+// const southStates = new Set([
+//   "Tamil Nadu",
+//   "Kerala",
+//   "Karnataka",
+//   "Andhra Pradesh",
+//   "Telangana",
+// ]);
+
+// export const generateAndStoreOtp = (identifier) => {
+//   const otp = Math.floor(100000 + Math.random() * 900000).toString();
+//   otpStore.set(identifier, { otp, expires: Date.now() + EXP_MS });
+//   return otp;
+// };
+
+// export const verifyOtp = (identifier, candidateOtp) => {
+//   const rec = otpStore.get(identifier);
+//   if (!rec) return false;
+//   if (Date.now() > rec.expires) {
+//     otpStore.delete(identifier);
+//     return false;
+//   }
+//   if (rec.otp !== candidateOtp) return false;
+//   otpStore.delete(identifier);
+//   return true;
+// };
+
+// export const sendEmailOtp = async (email, otp) => {
+//   const transporter = nodemailer.createTransport({
+//     service: "gmail",
+//     auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
+//   });
+
+//   await transporter.sendMail({
+//     from: `"YouTube 2.0" <${process.env.EMAIL_USER}>`,
+//     to: email,
+//     subject: "Your login OTP",
+//     text: `Your OTP is ${otp}`,
+//   });
+// };
+
+// export const sendSmsOtp = async (mobile, otp) => {
+//   if (!mobile) throw new Error("Mobile number missing");
+//   if (!process.env.TWILIO_SID || !process.env.TWILIO_AUTH_TOKEN || !process.env.TWILIO_PHONE) {
+//     throw new Error("Twilio not configured");
+//   }
+//   const client = twilio(process.env.TWILIO_SID, process.env.TWILIO_AUTH_TOKEN);
+//     const to = mobile.startsWith("+") ? mobile : `+91${mobile}`;
+//   await client.messages.create({
+//     body: `Your OTP is ${otp}`,
+//     from: process.env.TWILIO_PHONE,
+//     to,
+//   });
+// };
+
+// // Decide OTP method automatically based on state
+// export const decideOtpMethod = (state) => southStates.has(state) ? "email" : "mobile";
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// import nodemailer from "nodemailer";
+// import twilio from "twilio";
+
+// // Temporary in-memory store for OTPs
+// const otpStore = new Map(); // { identifier -> { otp, expires } }
+// const EXP_MS = 5 * 60 * 1000; // 5 minutes expiration
+
+// // South Indian states for deciding OTP channel
+// const southStates = new Set([
+//   "Tamil Nadu",
+//   "Kerala",
+//   "Karnataka",
+//   "Andhra Pradesh",
+//   "Telangana",
+// ]);
+
+// // Normalize mobile numbers to full international format
+// const normalizeMobile = (mobile) => mobile.startsWith("+") ? mobile : `+91${mobile}`;
+
+// // Normalize email (lowercase for consistency)
+// const normalizeEmail = (email) => email.trim().toLowerCase();
+
+// // Generate and store OTP
+// export const generateAndStoreOtp = (identifier) => {
+//   const otp = Math.floor(100000 + Math.random() * 900000).toString();
+//   otpStore.set(identifier, { otp, expires: Date.now() + EXP_MS });
+//   return otp;
+// };
+
+// // Verify OTP
+// export const verifyOtp = (identifier, candidateOtp) => {
+//   const rec = otpStore.get(identifier);
+//   if (!rec) return false;
+//   if (Date.now() > rec.expires) {
+//     otpStore.delete(identifier);
+//     return false;
+//   }
+//   if (rec.otp !== candidateOtp) return false;
+//   otpStore.delete(identifier);
+//   return true;
+// };
+
+// // Send OTP via Email
+// export const sendEmailOtp = async (email, otp) => {
+//   const normalizedEmail = normalizeEmail(email);
+
+//   const transporter = nodemailer.createTransport({
+//     service: "gmail",
+//     auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
+//   });
+
+//   await transporter.sendMail({
+//     from: `"YouTube 2.0" <${process.env.EMAIL_USER}>`,
+//     to: normalizedEmail,
+//     subject: "Your login OTP",
+//     text: `Your OTP is ${otp}`,
+//   });
+
+//   return normalizedEmail;
+// };
+
+// // Send OTP via SMS
+// export const sendSmsOtp = async (mobile, otp) => {
+//   if (!mobile) throw new Error("Mobile number missing");
+//   if (!process.env.TWILIO_SID || !process.env.TWILIO_AUTH_TOKEN || !process.env.TWILIO_PHONE) {
+//     throw new Error("Twilio not configured");
+//   }
+
+//   const normalizedMobile = normalizeMobile(mobile);
+//   const client = twilio(process.env.TWILIO_SID, process.env.TWILIO_AUTH_TOKEN);
+
+//   await client.messages.create({
+//     body: `Your OTP is ${otp}`,
+//     from: process.env.TWILIO_PHONE,
+//     to: normalizedMobile,
+//   });
+
+//   return normalizedMobile;
+// };
+
+// // Decide OTP method automatically based on state
+// export const decideOtpMethod = (state) => southStates.has(state) ? "email" : "mobile";
+
+// // Wrapper function to generate, store, and send OTP
+// export const sendOtp = async ({ email, mobile, state }) => {
+//   const otpMethod = decideOtpMethod(state);
+//   let identifier;
+
+//   if (otpMethod === "email") {
+//     const normalizedEmail = normalizeEmail(email);
+//     const otp = generateAndStoreOtp(normalizedEmail);
+//     await sendEmailOtp(email, otp);
+//     identifier = normalizedEmail;
+//   } else {
+//     const normalizedMobile = normalizeMobile(mobile);
+//     const otp = generateAndStoreOtp(normalizedMobile);
+//     await sendSmsOtp(mobile, otp);
+//     identifier = normalizedMobile;
+//   }
+
+//   return { ok: true, otpMethod, identifier, message: `OTP sent via ${otpMethod}` };
+// };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import nodemailer from "nodemailer";
+import twilio from "twilio";
+
+// Temporary in-memory store for OTPs
+const otpStore = new Map(); // { identifier -> { otp, expires } }
+const EXP_MS = 5 * 60 * 1000; // 5 minutes expiration
+
+// South Indian states for deciding OTP channel
+const southStates = new Set([
+  "Tamil Nadu",
+  "Kerala",
+  "Karnataka",
+  "Andhra Pradesh",
+  "Telangana",
+]);
+
+// Normalize mobile numbers
+const normalizeMobile = (mobile) =>
+  mobile.startsWith("+") ? mobile : `+91${mobile}`;
+
+// Normalize email
+const normalizeEmail = (email) => email?.trim().toLowerCase() || null;
+
+// Generate and store OTP
+export const generateAndStoreOtp = (identifier) => {
+  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  otpStore.set(identifier, { otp, expires: Date.now() + EXP_MS });
+  return otp;
+};
+
+// Verify OTP
+export const verifyOtp = (identifier, candidateOtp) => {
+  const rec = otpStore.get(identifier);
+  if (!rec) return false;
+  if (Date.now() > rec.expires) {
+    otpStore.delete(identifier);
+    return false;
+  }
+  if (rec.otp !== candidateOtp) return false;
+  otpStore.delete(identifier); // clear on success
+  return true;
+};
+
+// Send OTP via Email
+export const sendEmailOtp = async (email, otp) => {
+  const normalizedEmail = normalizeEmail(email);
+
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
+  });
+
+  await transporter.sendMail({
+    from: `"YouTube 2.0" <${process.env.EMAIL_USER}>`,
+    to: normalizedEmail,
+    subject: "Your login OTP",
+    text: `Your OTP is ${otp}`,
+  });
+
+  return normalizedEmail;
+};
+
+// Send OTP via SMS
+export const sendSmsOtp = async (mobile, otp) => {
+  if (!mobile) throw new Error("Mobile number missing");
+  if (
+    !process.env.TWILIO_SID ||
+    !process.env.TWILIO_AUTH_TOKEN ||
+    !process.env.TWILIO_PHONE
+  ) {
+    throw new Error("Twilio not configured");
+  }
+
+  const normalizedMobile = normalizeMobile(mobile);
+  const client = twilio(process.env.TWILIO_SID, process.env.TWILIO_AUTH_TOKEN);
+
+  await client.messages.create({
+    body: `Your OTP is ${otp}`,
+    from: process.env.TWILIO_PHONE,
+    to: normalizedMobile,
+  });
+
+  return normalizedMobile;
+};
+
+// Decide OTP method automatically based on state
+export const decideOtpMethod = (state) =>
+  southStates.has(state) ? "email" : "mobile";
