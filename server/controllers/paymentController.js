@@ -4,7 +4,7 @@ import Razorpay from "razorpay";
 import crypto from "crypto";
 import User from "../Modals/user.js";
 import sendInvoiceEmail  from "../utils/sendInvoiceEmail.js"; // create this helper
-import Payment from "../Modals/payment.js"; // Make sure this path is correct
+import Payment from "../Modals/Payment.js"; // Make sure this path is correct
 
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID || "rzp_test_yourKey",
