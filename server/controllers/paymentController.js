@@ -46,11 +46,7 @@ export const verifyPayment = async (req, res) => {
     }
 
     // ✅ Step 2: Update user subscription plan
-    // const updatedUser = await User.findOneAndUpdate(
-    //   { email },
-    //   { subscriptionPlan: plan, isPremium: plan !== "Free" }, // save plan name
-    //   { new: true }
-    // );
+   
     const updatedUser = await User.findOneAndUpdate(
   { email },
   {
