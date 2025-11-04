@@ -174,12 +174,28 @@ const createPeerConnection = () => {
         remoteVideoRef.current.srcObject = remoteStream.current;
       }
     }, 1000);
+
+    setTimeout(() => {
+  if (remoteVideoRef.current) {
+    const video = remoteVideoRef.current;
+    video.play().catch(err => console.warn("⚠️ Remote video autoplay blocked:", err));
+  }
+}, 1500);
+
   };
 
   // ✅ Log connection states
-  peerConnection.current.onconnectionstatechange = () => {
-    console.log("🌐 Connection state:", peerConnection.current?.connectionState);
-  };
+ peerConnection.current.onconnectionstatechange = () => {
+  console.log("🌐 Connection state:", peerConnection.current?.connectionState);
+
+  if (peerConnection.current?.connectionState === "connected") {
+    console.log("✅ Connection established — reattaching remote stream if missing...");
+    if (remoteVideoRef.current && remoteStream.current) {
+      remoteVideoRef.current.srcObject = remoteStream.current;
+    }
+  }
+};
+
   peerConnection.current.oniceconnectionstatechange = () => {
     console.log("❄️ ICE state:", peerConnection.current?.iceConnectionState);
   };
