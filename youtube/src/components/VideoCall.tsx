@@ -69,63 +69,58 @@ const VideoCall = () => {
 
 
 // ---------------- CREATE PEER CONNECTION ----------------
+
+
 // const createPeerConnection = () => {
-//   console.log("⚙️ Creating RTCPeerConnection...");
-//   peerConnection.current = new RTCPeerConnection({
-//     iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
-//   });
+//   console.log("⚙️ Creating RTCPeerConnection with full ICE servers...");
+
+//   // ✅ Add both STUN and TURN servers for better cross-device connectivity
+//   const configuration = {
+//     iceServers: [
+//       { urls: "stun:stun.l.google.com:19302" },
+//       {
+//         urls: "turn:openrelay.metered.ca:80",
+//         username: "openrelayproject",
+//         credential: "openrelayproject",
+//       },
+//     ],
+//   };
+
+//   peerConnection.current = new RTCPeerConnection(configuration);
 
 //   console.log("🔗 PeerConnection created:", peerConnection.current);
 
-//   // prepare remote stream container
+//   // ✅ Remote stream setup
 //   remoteStream.current = new MediaStream();
 //   if (remoteVideoRef.current) {
 //     remoteVideoRef.current.srcObject = remoteStream.current;
-//     // optional: try to allow autoplay by muting remote initially if you see autoplay blocked
-//     // remoteVideoRef.current.muted = true; // uncomment to force autoplay, then unmute later
-//     console.log("🎬 Remote video element initialized with internal remoteStream.");
-//   } else {
-//     console.warn("⚠️ remoteVideoRef.current is NULL at creation!");
+//     console.log("🎬 Remote video element initialized with remoteStream.");
 //   }
 
-//   // Robust ontrack: accept both event.streams and individual tracks
+//   // ✅ Handle incoming remote tracks
 //   peerConnection.current.ontrack = (event) => {
 //     console.log("📡 ontrack event:", event);
-
-//     // If event.streams exists and has a stream, attach it
-//     if (event.streams && event.streams.length > 0) {
-//       const stream = event.streams[0];
-//       console.log("📺 ontrack: attaching event.streams[0], tracks:", stream.getTracks().map(t => t.kind));
-//       if (remoteVideoRef.current) remoteVideoRef.current.srcObject = stream;
-//       return;
-//     }
-
-//     // Fallback: use event.track and our remoteStream container
-//     if (event.track) {
-//       console.log("📺 ontrack fallback: adding individual track:", event.track.kind);
+//     if (event.streams && event.streams[0]) {
+//       if (remoteVideoRef.current) remoteVideoRef.current.srcObject = event.streams[0];
+//     } else if (event.track) {
 //       remoteStream.current?.addTrack(event.track);
 //       if (remoteVideoRef.current) remoteVideoRef.current.srcObject = remoteStream.current;
-//       return;
 //     }
-
-//     console.warn("⚠️ ontrack fired but no streams or track found:", event);
 //   };
 
+//   // ✅ Log connection states
 //   peerConnection.current.onconnectionstatechange = () => {
-//     console.log("🌐 connectionState →", peerConnection.current?.connectionState);
+//     console.log("🌐 Connection state:", peerConnection.current?.connectionState);
 //   };
-
 //   peerConnection.current.oniceconnectionstatechange = () => {
-//     console.log("❄️ iceConnectionState →", peerConnection.current?.iceConnectionState);
+//     console.log("❄️ ICE state:", peerConnection.current?.iceConnectionState);
 //   };
-
 //   peerConnection.current.onsignalingstatechange = () => {
-//     console.log("📡 signalingState →", peerConnection.current?.signalingState);
+//     console.log("📡 Signaling state:", peerConnection.current?.signalingState);
 //   };
 
 //   peerConnection.current.onicecandidate = (ev) => {
-//     console.log("🧊 onicecandidate event:", ev?.candidate);
-//     // this will be set later per-room with the proper collection; if you want, set a default logger here
+//     console.log("🧊 ICE candidate event:", ev?.candidate);
 //   };
 // };
 
@@ -134,20 +129,23 @@ const VideoCall = () => {
 const createPeerConnection = () => {
   console.log("⚙️ Creating RTCPeerConnection with full ICE servers...");
 
-  // ✅ Add both STUN and TURN servers for better cross-device connectivity
   const configuration = {
     iceServers: [
       { urls: "stun:stun.l.google.com:19302" },
       {
-        urls: "turn:openrelay.metered.ca:80",
+        urls: [
+          "turn:openrelay.metered.ca:80?transport=tcp",
+          "turn:openrelay.metered.ca:443?transport=tcp",
+          "turn:openrelay.metered.ca:3478?transport=udp",
+        ],
         username: "openrelayproject",
         credential: "openrelayproject",
       },
     ],
+    iceCandidatePoolSize: 10,
   };
 
   peerConnection.current = new RTCPeerConnection(configuration);
-
   console.log("🔗 PeerConnection created:", peerConnection.current);
 
   // ✅ Remote stream setup
@@ -160,12 +158,22 @@ const createPeerConnection = () => {
   // ✅ Handle incoming remote tracks
   peerConnection.current.ontrack = (event) => {
     console.log("📡 ontrack event:", event);
-    if (event.streams && event.streams[0]) {
-      if (remoteVideoRef.current) remoteVideoRef.current.srcObject = event.streams[0];
+    const [stream] = event.streams;
+    if (stream && remoteVideoRef.current) {
+      remoteVideoRef.current.srcObject = stream;
     } else if (event.track) {
       remoteStream.current?.addTrack(event.track);
-      if (remoteVideoRef.current) remoteVideoRef.current.srcObject = remoteStream.current;
+      if (remoteVideoRef.current) {
+        remoteVideoRef.current.srcObject = remoteStream.current;
+      }
     }
+
+    // ✅ Ensure video attaches on mobile (fallback)
+    setTimeout(() => {
+      if (remoteVideoRef.current && remoteStream.current) {
+        remoteVideoRef.current.srcObject = remoteStream.current;
+      }
+    }, 1000);
   };
 
   // ✅ Log connection states
@@ -179,13 +187,11 @@ const createPeerConnection = () => {
     console.log("📡 Signaling state:", peerConnection.current?.signalingState);
   };
 
+  // ✅ ICE candidate logging
   peerConnection.current.onicecandidate = (ev) => {
-    console.log("🧊 ICE candidate event:", ev?.candidate);
+    if (ev.candidate) console.log("🧊 Local ICE candidate sent:", ev.candidate);
   };
 };
-
-
-
 
 
 // ---------------- START LOCAL CAMERA + MIC ----------------
