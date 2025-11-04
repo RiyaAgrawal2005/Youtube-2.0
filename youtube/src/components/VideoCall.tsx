@@ -71,81 +71,23 @@ const VideoCall = () => {
 // ---------------- CREATE PEER CONNECTION ----------------
 
 
-// const createPeerConnection = () => {
-//   console.log("⚙️ Creating RTCPeerConnection with full ICE servers...");
-
-//   // ✅ Add both STUN and TURN servers for better cross-device connectivity
-//   const configuration = {
-//     iceServers: [
-//       { urls: "stun:stun.l.google.com:19302" },
-//       {
-//         urls: "turn:openrelay.metered.ca:80",
-//         username: "openrelayproject",
-//         credential: "openrelayproject",
-//       },
-//     ],
-//   };
-
-//   peerConnection.current = new RTCPeerConnection(configuration);
-
-//   console.log("🔗 PeerConnection created:", peerConnection.current);
-
-//   // ✅ Remote stream setup
-//   remoteStream.current = new MediaStream();
-//   if (remoteVideoRef.current) {
-//     remoteVideoRef.current.srcObject = remoteStream.current;
-//     console.log("🎬 Remote video element initialized with remoteStream.");
-//   }
-
-//   // ✅ Handle incoming remote tracks
-//   peerConnection.current.ontrack = (event) => {
-//     console.log("📡 ontrack event:", event);
-//     if (event.streams && event.streams[0]) {
-//       if (remoteVideoRef.current) remoteVideoRef.current.srcObject = event.streams[0];
-//     } else if (event.track) {
-//       remoteStream.current?.addTrack(event.track);
-//       if (remoteVideoRef.current) remoteVideoRef.current.srcObject = remoteStream.current;
-//     }
-//   };
-
-//   // ✅ Log connection states
-//   peerConnection.current.onconnectionstatechange = () => {
-//     console.log("🌐 Connection state:", peerConnection.current?.connectionState);
-//   };
-//   peerConnection.current.oniceconnectionstatechange = () => {
-//     console.log("❄️ ICE state:", peerConnection.current?.iceConnectionState);
-//   };
-//   peerConnection.current.onsignalingstatechange = () => {
-//     console.log("📡 Signaling state:", peerConnection.current?.signalingState);
-//   };
-
-//   peerConnection.current.onicecandidate = (ev) => {
-//     console.log("🧊 ICE candidate event:", ev?.candidate);
-//   };
-// };
-
-
-
 const createPeerConnection = () => {
   console.log("⚙️ Creating RTCPeerConnection with full ICE servers...");
 
+  // ✅ Add both STUN and TURN servers for better cross-device connectivity
   const configuration = {
     iceServers: [
       { urls: "stun:stun.l.google.com:19302" },
       {
-        urls: [
-          "turn:openrelay.metered.ca:80?transport=tcp",
-          "turn:openrelay.metered.ca:443?transport=tcp",
-          "turn:openrelay.metered.ca:3478?transport=udp",
-        ],
+        urls: "turn:openrelay.metered.ca:80",
         username: "openrelayproject",
         credential: "openrelayproject",
       },
     ],
-    iceCandidatePoolSize: 10,
   };
 
   peerConnection.current = new RTCPeerConnection(configuration);
+
   console.log("🔗 PeerConnection created:", peerConnection.current);
 
   // ✅ Remote stream setup
@@ -158,44 +100,18 @@ const createPeerConnection = () => {
   // ✅ Handle incoming remote tracks
   peerConnection.current.ontrack = (event) => {
     console.log("📡 ontrack event:", event);
-    const [stream] = event.streams;
-    if (stream && remoteVideoRef.current) {
-      remoteVideoRef.current.srcObject = stream;
+    if (event.streams && event.streams[0]) {
+      if (remoteVideoRef.current) remoteVideoRef.current.srcObject = event.streams[0];
     } else if (event.track) {
       remoteStream.current?.addTrack(event.track);
-      if (remoteVideoRef.current) {
-        remoteVideoRef.current.srcObject = remoteStream.current;
-      }
+      if (remoteVideoRef.current) remoteVideoRef.current.srcObject = remoteStream.current;
     }
-
-    // ✅ Ensure video attaches on mobile (fallback)
-    setTimeout(() => {
-      if (remoteVideoRef.current && remoteStream.current) {
-        remoteVideoRef.current.srcObject = remoteStream.current;
-      }
-    }, 1000);
-
-    setTimeout(() => {
-  if (remoteVideoRef.current) {
-    const video = remoteVideoRef.current;
-    video.play().catch(err => console.warn("⚠️ Remote video autoplay blocked:", err));
-  }
-}, 1500);
-
   };
 
   // ✅ Log connection states
- peerConnection.current.onconnectionstatechange = () => {
-  console.log("🌐 Connection state:", peerConnection.current?.connectionState);
-
-  if (peerConnection.current?.connectionState === "connected") {
-    console.log("✅ Connection established — reattaching remote stream if missing...");
-    if (remoteVideoRef.current && remoteStream.current) {
-      remoteVideoRef.current.srcObject = remoteStream.current;
-    }
-  }
-};
-
+  peerConnection.current.onconnectionstatechange = () => {
+    console.log("🌐 Connection state:", peerConnection.current?.connectionState);
+  };
   peerConnection.current.oniceconnectionstatechange = () => {
     console.log("❄️ ICE state:", peerConnection.current?.iceConnectionState);
   };
@@ -203,14 +119,104 @@ const createPeerConnection = () => {
     console.log("📡 Signaling state:", peerConnection.current?.signalingState);
   };
 
-  // ✅ ICE candidate logging
   peerConnection.current.onicecandidate = (ev) => {
-    if (ev.candidate) console.log("🧊 Local ICE candidate sent:", ev.candidate);
+    console.log("🧊 ICE candidate event:", ev?.candidate);
   };
 };
 
 
+
+// const createPeerConnection = () => {
+//   console.log("⚙️ Creating RTCPeerConnection with full ICE servers...");
+
+//   const configuration = {
+//     iceServers: [
+//       { urls: "stun:stun.l.google.com:19302" },
+//       {
+//         urls: [
+//           "turn:openrelay.metered.ca:80?transport=tcp",
+//           "turn:openrelay.metered.ca:443?transport=tcp",
+//           "turn:openrelay.metered.ca:3478?transport=udp",
+//         ],
+//         username: "openrelayproject",
+//         credential: "openrelayproject",
+//       },
+//     ],
+//     iceCandidatePoolSize: 10,
+//   };
+
+//   peerConnection.current = new RTCPeerConnection(configuration);
+//   console.log("🔗 PeerConnection created:", peerConnection.current);
+
+//   // ✅ Remote stream setup
+//   remoteStream.current = new MediaStream();
+//   if (remoteVideoRef.current) {
+//     remoteVideoRef.current.srcObject = remoteStream.current;
+//     console.log("🎬 Remote video element initialized with remoteStream.");
+//   }
+
+//   // ✅ Handle incoming remote tracks
+//   peerConnection.current.ontrack = (event) => {
+//     console.log("📡 ontrack event:", event);
+//     const [stream] = event.streams;
+//     if (stream && remoteVideoRef.current) {
+//       remoteVideoRef.current.srcObject = stream;
+//     } else if (event.track) {
+//       remoteStream.current?.addTrack(event.track);
+//       if (remoteVideoRef.current) {
+//         remoteVideoRef.current.srcObject = remoteStream.current;
+//       }
+//     }
+
+//     // ✅ Ensure video attaches on mobile (fallback)
+//     setTimeout(() => {
+//       if (remoteVideoRef.current && remoteStream.current) {
+//         remoteVideoRef.current.srcObject = remoteStream.current;
+//       }
+//     }, 1000);
+
+//     setTimeout(() => {
+//   if (remoteVideoRef.current) {
+//     const video = remoteVideoRef.current;
+//     video.play().catch(err => console.warn("⚠️ Remote video autoplay blocked:", err));
+//   }
+// }, 1500);
+
+//   };
+
+//   // ✅ Log connection states
+//  peerConnection.current.onconnectionstatechange = () => {
+//   console.log("🌐 Connection state:", peerConnection.current?.connectionState);
+
+//   if (peerConnection.current?.connectionState === "connected") {
+//     console.log("✅ Connection established — reattaching remote stream if missing...");
+//     if (remoteVideoRef.current && remoteStream.current) {
+//       remoteVideoRef.current.srcObject = remoteStream.current;
+//     }
+//   }
+// };
+
+//   peerConnection.current.oniceconnectionstatechange = () => {
+//     console.log("❄️ ICE state:", peerConnection.current?.iceConnectionState);
+//   };
+//   peerConnection.current.onsignalingstatechange = () => {
+//     console.log("📡 Signaling state:", peerConnection.current?.signalingState);
+//   };
+
+//   // ✅ ICE candidate logging
+//   peerConnection.current.onicecandidate = (ev) => {
+//     if (ev.candidate) console.log("🧊 Local ICE candidate sent:", ev.candidate);
+//   };
+// };
+
+
+
+
+
+
 // ---------------- START LOCAL CAMERA + MIC ----------------
+
+
 const startStream = async () => {
   try {
     console.log("🎥 Requesting camera/mic permission...");
