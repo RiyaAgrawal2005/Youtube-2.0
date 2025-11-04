@@ -41,13 +41,7 @@ useEffect(() => {
   }, [userEmail]);
 
 
-  // useEffect(() => {
-  //   const fetchDownloads = async () => {
-  //     const res = await axios.get(`/api/downloads/user/${userEmail}`);
-  //     setDownloads(res.data);
-  //   };
-  //   fetchDownloads();
-  // }, []);
+
 
   return (
     <div>

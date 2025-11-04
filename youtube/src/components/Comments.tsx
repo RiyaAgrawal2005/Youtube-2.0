@@ -43,7 +43,6 @@ const user = userContext?.user ?? null;
   const [city, setCity] = useState('');
   const [showConfirm, setShowConfirm] = useState(false);
   const [commentToDelete, setCommentToDelete] = useState<string | null>(null);
-  // const [targetLanguage, setTargetLanguage] = useState('en');
   const [targetLanguageForInput, setTargetLanguageForInput] = useState('en');
   const [translatedCommentPreview, setTranslatedCommentPreview] = useState('');
   const [commentLangMap, setCommentLangMap] = useState<{ [key: string]: string }>({});

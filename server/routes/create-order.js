@@ -1,6 +1,4 @@
 
-
-// routes/create-order.js
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -18,29 +16,6 @@ const razorpay = new Razorpay({
   key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
 
-// create order endpoint
-// router.post("/", async (req, res) => {
-//   res.setHeader("Content-Type", "application/json");
-//   try {
-//     const { amount, currency, purpose, email } = req.body;
-
-//     const options = {
-//       amount: amount * 100,
-//       currency: currency || "INR",
-//       payment_capture: 1,
-//       notes: { purpose: purpose || "subscription", email }, // save purpose
-//     };
-
-//     const order = await razorpay.orders.create(options);
-//     console.log("🆕 Order created:", order.id, "Purpose:", options.notes.purpose);
-//     res.json(order);
-//   } catch (err) {
-//     console.error("Razorpay order creation failed:", err);
-//     res.status(500).json({ error: "Order creation failed" });
-//   }
-// });
-
-
 
 // create order endpoint
 router.post("/", async (req, res) => {
@@ -54,7 +29,6 @@ const finalReceiptId = receiptId || `receipt_${Date.now()}`
       payment_capture: 1,
       receipt: finalReceiptId, // ✅ unique receipt
       description: `${purpose === "premium-download" ? "Premium Download" : "Subscription"}: ${plan || purpose || "subscription"}`,
-      // description: `Subscription Plan: ${plan || purpose || "subscription"}`,
       notes: { purpose: purpose || "subscription",
 plan: plan || "",
          email 

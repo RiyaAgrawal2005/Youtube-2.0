@@ -47,7 +47,7 @@ export default function RelatedVideos({ videos }: RelatedVideosProps) {
 
 
           <div className="flex-1 min-w-0">
-            {/* <h3 className="font-medium text-sm line-clamp-2 group-hover:text-blue-600"> */}
+           
               <h3 className="font-medium text-sm line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 text-gray-900 dark:text-gray-100">
               {video.videotitle}
             </h3>

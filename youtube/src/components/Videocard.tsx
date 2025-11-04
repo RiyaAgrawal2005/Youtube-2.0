@@ -19,32 +19,29 @@ export default function VideoCard({ video }: any) {
   return (
     <Link href={`/watch/${video?._id}`} className="group">
       <div className="space-y-3">
-        {/* <div className="relative aspect-video rounded-lg overflow-hidden bg-gray-100"> */}
+       
           <div className="relative aspect-video border-2 rounded-lg overflow-hidden bg-card transition-colors duration-300">
 
-          {/* <video
-            src={`${process.env.BACKEND_URL}/${video?.filepath}`}
-            className="object-cover group-hover:scale-105 transition-transform duration-200"
-          /> */}
+         
 
 
 <video
             src={`${process.env.NEXT_PUBLIC_BACKEND_URL}/${video?.filepath}`}
-            className="object-cover group-hover:scale-105 transition-transform duration-200"
+            className="w-full object-cover group-hover:scale-105 transition-transform duration-200"
             preload="metadata"
             crossOrigin="anonymous" // ✅ needed if backend allows it
             muted // avoids autoplay issues
             onLoadedMetadata={(e) => {
               const el = e.currentTarget as HTMLVideoElement;
-              // console.log("Duration:", el.duration); // debug
+             
               setDuration(el.duration);
             }}
           />
 
-          {/* <div className="absolute bottom-2 right-2 bg-black/80 text-white text-xs px-1 rounded"> */}
+         
           <div className="absolute bottom-2 right-2 bg-muted/80 text-muted-foreground text-xs px-1 rounded">
   {formatDuration(duration)}
-            {/* 10:24 */}
+        
           </div>
         </div>
         <div className="flex gap-3">
@@ -52,7 +49,7 @@ export default function VideoCard({ video }: any) {
             <AvatarFallback>{video?.videochanel[0]}</AvatarFallback>
           </Avatar>
           <div className="flex-1 min-w-0">
-            {/* <h3 className="font-medium text-sm line-clamp-2 group-hover:text-blue-600"> */}
+           
               <h3 className="font-medium text-sm line-clamp-2 group-hover:text-primary transition-colors duration-300">
 
               {video?.videotitle}

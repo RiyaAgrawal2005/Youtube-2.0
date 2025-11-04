@@ -15,9 +15,9 @@ const chatConfig = {
 
 const chatApp = initializeApp(chatConfig, "chatApp"); // Important: use unique name
 const chatDB = getFirestore(chatApp);
-// const chatAuth = getAuth(chatApp);
+
 export { chatDB,  };
-// export {chatDB, chatAuth}
+
 
 
 

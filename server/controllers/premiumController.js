@@ -1,34 +1,3 @@
-// import User from "../Modals/user.js";
-
-// export const setPremiumStatus = async (req, res) => {
-//   const { email } = req.body;
-
-//   try {
-//     const user = await User.findOneAndUpdate(
-//       { email },
-//       { isPremium: true },
-//       { new: true }
-//     );
-//     res.status(200).json({ success: true, user });
-//   } catch (error) {
-//     res.status(500).json({ success: false, error: "Could not update user" });
-//   }
-// };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 import User from "../Modals/user.js";

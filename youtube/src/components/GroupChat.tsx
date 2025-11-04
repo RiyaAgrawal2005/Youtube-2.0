@@ -113,8 +113,7 @@ const GroupChat = () => {
           padding: '10px',
           height: '540px',
           overflowY: 'auto',
-          // backgroundColor: 'grey',
-          // marginTop: '2px',
+         
           marginBottom: '15px',
         }}
       >

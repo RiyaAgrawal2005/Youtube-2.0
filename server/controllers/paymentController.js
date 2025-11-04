@@ -8,7 +8,7 @@ import Payment from "../Modals/Payment.js"; // Make sure this path is correct
 
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID || "rzp_test_yourKey",
-  key_secret: process.env.RAZORPAY_KEY_SECRET || "yourSecretKey", // FIX: should be RAZORPAY_KEY_SECRET, not RAZORPAY_SECRET
+  key_secret: process.env.RAZORPAY_KEY_SECRET || "yourSecretKey", 
 });
 
 // ------------------ CREATE ORDER ------------------

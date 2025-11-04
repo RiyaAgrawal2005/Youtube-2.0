@@ -1,5 +1,4 @@
-// src/pages/videocall.tsx  (if using Next.js Pages router)
-// OR if App Router, add inside /app/videocall/page.tsx
+
 
 import VideoCall from "@/components/VideoCall";
 

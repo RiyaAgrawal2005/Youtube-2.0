@@ -49,14 +49,6 @@ const sendInvoiceEmail = async (
   console.log("🔑 EMAIL_PASS:", process.env.EMAIL_PASS ? "LOADED" : "MISSING");
 console.log("Sending invoice to:", toEmail);
 
-//   await transporter.sendMail({
-//     from: `"Your App" <${process.env.EMAIL_USER}>`,
-//     to: toEmail,
-//     subject,
-//     html,
-//   });
-// 
-
 console.log("🔐 Using credentials:", {
   user: process.env.EMAIL_USER,
   passLength: process.env.EMAIL_PASS?.length,

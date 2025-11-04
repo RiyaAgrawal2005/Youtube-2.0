@@ -1,15 +1,3 @@
-// import Comments from '@/components/Comments';
-
-// const CommentsPage = () => {
-//   return (
-//     <div className="min-h-screen bg-black text-white p-4">
-//       <h1 className="text-2xl font-bold mb-4">Comment Section</h1>
-//       <Comments />
-//     </div>
-//   );
-// };
-
-// export default CommentsPage;
 
 
 

@@ -6,13 +6,7 @@ const ChannelHeader = ({ channel, user }: any) => {
   const [isSubscribed, setIsSubscribed] = useState(false);
   return (
     <div className="w-full">
-      {/* Banner */}
-      {/* <div className="relative h-32 md:h-48 lg:h-64 bg-gradient-to-r from-blue-400 to-purple-500 overflow-hidden"></div> */}
       <div className="relative h-32 md:h-48 lg:h-64 bg-gradient-to-r from-blue-400 to-purple-500 dark:from-blue-800 dark:to-purple-900 overflow-hidden"></div>
-
-
-     {/* Channel Info */}
-      
 
 <div className="px-4 py-6 bg-white dark:bg-gray-800  shadow-sm transition-colors duration-300">
   <div className="flex flex-col md:flex-row gap-6 items-start">
@@ -26,7 +20,6 @@ const ChannelHeader = ({ channel, user }: any) => {
 
     
           <div className="flex-1 space-y-2">
-            {/* <h1 className="text-2xl md:text-4xl font-bold"> */}
               <h1 className="text-2xl md:text-4xl font-bold text-gray-900 dark:text-gray-100">
 
               {channel?.channelname}</h1>
@@ -34,7 +27,7 @@ const ChannelHeader = ({ channel, user }: any) => {
               <span>@{channel?.channelname.toLowerCase().replace(/\s+/g, "")}</span>
             </div>
             {channel?.description && (
-              // <p className="text-sm text-gray-700 max-w-2xl">
+        
                 <p className="text-sm text-gray-700 dark:text-gray-300 max-w-2xl">
 
                 {channel?.description}
@@ -47,10 +40,7 @@ const ChannelHeader = ({ channel, user }: any) => {
               <Button
                 onClick={() => setIsSubscribed(!isSubscribed)}
                 variant={isSubscribed ? "outline" : "default"}
-              //   className={
-              //     isSubscribed ? "bg-gray-100" : "bg-red-600 hover:bg-red-700"
-              //   }
-              // >
+          
               className={
     isSubscribed
       ? "bg-gray-100 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-200"
